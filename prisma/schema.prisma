@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Define your models based on your application needs
+model Invoice {
+  id              String    @id @default(uuid())
+  invoiceTitle    String
+  transactionDate DateTime
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  items           Item[]
+}
+
+model Item {
+  id          String  @id @default(uuid())
+  description String
+  quantity    Int
+  price       Float
+  total       Float
+  invoiceId   String
+  invoice     Invoice @relation(fields: [invoiceId], references: [id])
+}
+
+model Expense {
+  id            String          @id @default(uuid())
+  code_receipt  String
+  name_supplier String
+  note          String?
+  date          DateTime
+  total_price   Float
+  tax_price     Float
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  details       ExpenseDetail[]
+}
+
+model ExpenseDetail {
+  id             String  @id @default(uuid())
+  name_product   String
+  category       String
+  quantity       Int
+  unit           String
+  price_per_unit Float
+  total_price    Float
+  expenseId      String
+  expense        Expense @relation(fields: [expenseId], references: [id])
+}
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+
