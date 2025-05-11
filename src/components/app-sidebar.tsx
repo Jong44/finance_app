@@ -38,22 +38,22 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: BookOpen,
     },
     {
       title: "Invoices",
-      url: "#",
+      url: "/invoices",
       icon: PieChart,
     },
     {
       title: "Savings",
-      url: "#",
+      url: "/savings",
       icon: LifeBuoy,
     },
     {
       title: "Reports",
-      url: "#",
+      url: "/reports",
       icon: Map,
     },
   ],

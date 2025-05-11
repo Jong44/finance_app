@@ -2,14 +2,13 @@
 
 import {
   Card,
-  CardAction,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { PieChart, Pie } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 
 import {
   ChartConfig,
@@ -20,36 +19,36 @@ import {
 
 import React from "react";
 import { TrendingUp } from "lucide-react";
+
+// Data untuk breakdown pengeluaran per kategori
 const chartDataPie = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
+  { category: "Food & Drinks", amount: 5000000, fill: "var(--color-level-1)" },
+  { category: "Transportation", amount: 3000000, fill: "var(--color-level-2)" },
+  { category: "Bills & Utilities", amount: 2000000, fill: "var(--color-level-3)" },
+  { category: "Entertainment", amount: 1500000, fill: "var(--color-level-4)" },
+  { category: "Savings", amount: 2500000, fill: "var(--color-level-5)" },
 ];
+
 const chartConfigPie = {
-  visitors: {
-    label: "Visitors",
+  food: {
+    label: "Food & Drinks",
+    color: "hsl(var(--chart-food))",
   },
-  chrome: {
-    label: "Chrome",
-    color: "#000",
+  transport: {
+    label: "Transportation",
+    color: "hsl(var(--chart-transport))",
   },
-  safari: {
-    label: "Safari",
-    color: "#111",
+  bills: {
+    label: "Bills & Utilities",
+    color: "hsl(var(--chart-bills))",
   },
-  firefox: {
-    label: "Firefox",
-    color: "hsl(var(--chart-3))",
+  entertainment: {
+    label: "Entertainment",
+    color: "hsl(var(--chart-entertainment))",
   },
-  edge: {
-    label: "Edge",
-    color: "hsl(var(--chart-4))",
-  },
-  other: {
-    label: "Other",
-    color: "hsl(var(--chart-5))",
+  savings: {
+    label: "Savings",
+    color: "hsl(var(--chart-savings))",
   },
 } satisfies ChartConfig;
 
@@ -57,22 +56,27 @@ const PieChartDashboard = () => {
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Label</CardTitle>
+        <CardTitle>Expense Breakdown Weekly</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
-        <ChartContainer
-          config={chartConfigPie}
-          className="mx-auto aspect-square max-h-[250px] pb-0 [&_.recharts-pie-label-text]:fill-foreground"
-        >
+        <ChartContainer config={chartConfigPie}>
           <PieChart>
-            <ChartTooltip content={<ChartTooltipContent hideLabel />} />
+            <Tooltip content={<ChartTooltipContent hideLabel />} />
             <Pie
               data={chartDataPie}
-              dataKey="visitors"
-              label
-              nameKey="browser"
-            />
+              dataKey="amount"
+              nameKey="category"
+              cx="50%"
+              cy="50%"
+              outerRadius={100}
+              label={({ name, value }) => `${name} (${value.toLocaleString()})`}
+              labelLine={false}
+            >
+              {chartDataPie.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+            </Pie>
           </PieChart>
         </ChartContainer>
       </CardContent>
@@ -81,7 +85,7 @@ const PieChartDashboard = () => {
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing expense distribution for the last 6 months
         </div>
       </CardFooter>
     </Card>

@@ -41,9 +41,20 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
 }
 
 :root {
+
+
+  --color-level-1: hsl(210, 10%, 30%);
+  --color-level-2: hsl(210, 10%, 40%);
+  --color-level-3: hsl(210, 10%, 50%);
+  --color-level-4: hsl(210, 10%, 60%);
+  --color-level-5: hsl(210, 10%, 70%);
+
+
+
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

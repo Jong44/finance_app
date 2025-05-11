@@ -8,31 +8,31 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "../ui/chart";
-import { Car, DollarSign, TrendingUp } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, Tooltip, ResponsiveContainer } from "recharts";
+import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
+import { DollarSign, TrendingUp } from "lucide-react";
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { month: "January", needs: 3500, wants: 2000, savings: 1500 },
+  { month: "February", needs: 4000, wants: 2500, savings: 1000 },
+  { month: "March", needs: 3800, wants: 2200, savings: 1700 },
+  { month: "April", needs: 4200, wants: 2600, savings: 1200 },
+  { month: "May", needs: 3900, wants: 2400, savings: 1300 },
+  { month: "June", needs: 4100, wants: 2700, savings: 1200 },
 ];
+
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
+  needs: {
+    label: "Needs (50%)",
+    color: "hsl(var(--chart-needs))",
   },
-  mobile: {
-    label: "Mobile",
-    color: "hsl(var(--chart-2))",
+  wants: {
+    label: "Wants (30%)",
+    color: "hsl(var(--chart-wants))",
+  },
+  savings: {
+    label: "Savings (20%)",
+    color: "hsl(var(--chart-savings))",
   },
 } satisfies ChartConfig;
 
@@ -40,13 +40,13 @@ const BarChartDashboard = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Bar Chart - Multiple</CardTitle>
+        <CardTitle>Budget Balance (50/30/20)</CardTitle>
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
-            <CartesianGrid vertical={false} />
+          <BarChart data={chartData} barGap={12} barCategoryGap="20%">
+            <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="month"
               tickLine={false}
@@ -54,12 +54,15 @@ const BarChartDashboard = () => {
               axisLine={false}
               tickFormatter={(value) => value.slice(0, 3)}
             />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent indicator="dashed" />}
+            <YAxis tickLine={false} axisLine={false} />
+            <Tooltip
+              content={<ChartTooltipContent indicator="line" />}
+              cursor={{ fill: "rgba(0,0,0,0.05)" }}
             />
-            <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
-            <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
+            <Legend />
+            <Bar dataKey="needs" fill="var(--color-level-1)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="wants" fill="var(--color-level-2)" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="savings" fill="var(--color-level-3)" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ChartContainer>
       </CardContent>
@@ -68,7 +71,7 @@ const BarChartDashboard = () => {
           Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing budget distribution for the last 6 months
         </div>
       </CardFooter>
     </Card>
