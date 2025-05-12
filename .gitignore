@@ -41,4 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 # readme
-SUPABASE_PRISMA_INTEGRATION.md
+/SUPABASE_PRISMA_INTEGRATION.md
+
+genial-broker-459517-c9-e41d7926bb6d.json
