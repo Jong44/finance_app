@@ -2,13 +2,25 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { DollarSign } from "lucide-react";
 import BarChartDashboard from "@/components/dashboard/bar-chart-dashboard";
 import PieChartDashboard from "@/components/dashboard/pie-chart-dashboard";
 import TableDashboard from "@/components/dashboard/table-dashboard";
 import BarChartMixedDashboard from "@/components/dashboard/bar-chart-mixed-dashboad";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/router";
 const Dashbord = () => {
+  const router = useRouter();
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push("/login");
+      }
+    };
+    checkSession();
+  }, [router]);
   return (
     <div className="p-6">
       <h1 className="font-bold text-3xl mb-10">Dashboard</h1>
