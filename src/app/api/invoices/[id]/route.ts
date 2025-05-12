@@ -17,9 +17,9 @@ interface Params {
  * GET /api/invoices/[id]
  * Retrieves a specific invoice by ID
  */
-export async function GET(request: NextRequest, { params }: Params) {
+export async function GET(request: NextRequest, Params:any) {
     try {
-        const { id } = params;
+        const { id } = Params;
         const currentUser = await getCurrentUser();
 
         if (!currentUser) {
@@ -51,9 +51,9 @@ export async function GET(request: NextRequest, { params }: Params) {
  * PUT /api/invoices/[id]
  * Updates a specific invoice by ID
  */
-export async function PUT(request: NextRequest, { params }: Params) {
+export async function PUT(request: NextRequest,  Params: any) {
   try {
-    const { id } = params;
+    const { id } = Params;
     const data = await request.json();
 
     const currentUser = await getCurrentUser();
@@ -81,9 +81,9 @@ export async function PUT(request: NextRequest, { params }: Params) {
  * DELETE /api/invoices/[id]
  * Deletes a specific invoice by ID
  */
-export async function DELETE(request: NextRequest, { params }: Params) {
+export async function DELETE(request: NextRequest, Params:any) {
   try {
-    const { id } = params;
+    const { id } = Params;
 
     const currentUser = await getCurrentUser();
 

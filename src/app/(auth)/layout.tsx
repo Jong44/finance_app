@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
+import { supabase } from "@/lib/supabase";
 
 export default function AuthLayout({
   children,
@@ -12,6 +13,16 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        router.push("/login");
+      }
+    };
+    checkSession();
+  }, [router]);
   return (
     <SidebarProvider>
       <AppSidebar />

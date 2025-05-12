@@ -41,21 +41,21 @@ export async function POST(request: NextRequest) {
     const currentUser = await getCurrentUser();
 
     if (!currentUser) {
-        return NextResponse.json(
-            { error: 'Unauthorized' },
-            { status: 401 }
-        );
+        return NextResponse.json(NextResponse.json({
+    status: false,
+    data: "error"
+  }));
     }
 
     console.log(currentUser);
 
     const invoice = await expenseOperations.create(data, currentUser.id);
-    return NextResponse.json({ invoice }, { status: 201 });
+    return NextResponse.json({ success: true, data: invoice });
   } catch (error) {
     console.error('Error creating invoice:', error);
-    return NextResponse.json(
-      { error: 'Failed to create invoice' },
-      { status: 500 }
-    );
+    return  NextResponse.json({
+    status: false,
+    data: error
+  })
   }
 }
