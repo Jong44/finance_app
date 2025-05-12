@@ -4,6 +4,7 @@ import * as React from "react"
 import {
   BookOpen,
   Bot,
+  ChevronRight,
   Command,
   Frame,
   LifeBuoy,
@@ -27,7 +28,18 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
+  SidebarMenuAction,
 } from "@/components/ui/sidebar"
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+
+import { getCurrentUser } from "@/lib/db"
 
 const data = {
   user: {
@@ -43,8 +55,18 @@ const data = {
     },
     {
       title: "Invoices",
-      url: "invoice",
+      url: "#",
       icon: PieChart,
+      items: [
+        {
+          title: "Create Invoice",
+          url: "invoice",
+        },
+        {
+          title: "Records",
+          url: "record",
+        },
+      ],
     },
     {
       title: "Savings",
@@ -59,7 +81,10 @@ const data = {
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export  function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  
+  // const currentUser = await getCurrentUser()
+  
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -71,7 +96,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <User className="h-4 w-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">John Doe</span>
+                  <span className="truncate font-medium">{"John Doe"}</span>
                   <span className="truncate text-xs">Mahasiswa</span>
                 </div>
               </a>

@@ -18,13 +18,12 @@ export async function updateSession(request: NextRequest) {
             return request.cookies.getAll()
             },
             setAll(cookiesToSet) {
-                cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
-                supabaseResponse = NextResponse.next({
-                    request,
-                })
-                cookiesToSet.forEach(({ name, value, options }) =>
-                    supabaseResponse.cookies.set(name, value, options)
-                )
+                cookiesToSet.forEach(({ name, value, options }) => {
+                    // Directly set cookies on the response object
+                    supabaseResponse.cookies.set(name, value, options);
+                });
+                // Return the modified response
+                return;
             },
             // get(name) {
             //     return request.cookies.get(name)?.value
@@ -60,6 +59,8 @@ export async function updateSession(request: NextRequest) {
         '/dashboard',
         '/invoice',
         '/api/invoices',
+        '/expense',
+        '/api/expenses',
     ]
 
     // Check if the current path matches any protected route

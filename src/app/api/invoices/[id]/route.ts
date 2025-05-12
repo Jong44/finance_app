@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { expenseOperations } from '@/lib/db';
+import { getCurrentUser } from '@/lib/db';
+
+/**
+ * GET /api/invoices
+ * Retrieves all invoices
+ */
 
 interface Params {
   params: {
@@ -14,7 +20,15 @@ interface Params {
 export async function GET(request: NextRequest, { params }: Params) {
     try {
         const { id } = params;
-        const invoice = await expenseOperations.getById(id);
+        const currentUser = await getCurrentUser();
+
+        if (!currentUser) {
+            return NextResponse.json(
+                { error: 'Unauthorized' },
+                { status: 401 }
+            );
+        }
+        const invoice = await expenseOperations.getById(id, currentUser.id);
         
         if (!invoice) {
             return NextResponse.json(
@@ -41,7 +55,17 @@ export async function PUT(request: NextRequest, { params }: Params) {
   try {
     const { id } = params;
     const data = await request.json();
-    const invoice = await expenseOperations.update(id, data);
+
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+        return NextResponse.json(
+            { error: 'Unauthorized' },
+            { status: 401 }
+        );
+    }
+
+    const invoice = await expenseOperations.update(id, data, currentUser.id);
     
     return NextResponse.json({ invoice });
   } catch (error) {
@@ -60,7 +84,17 @@ export async function PUT(request: NextRequest, { params }: Params) {
 export async function DELETE(request: NextRequest, { params }: Params) {
   try {
     const { id } = params;
-    await expenseOperations.delete(id);
+
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+        return NextResponse.json(
+            { error: 'Unauthorized' },
+            { status: 401 }
+        );
+    }
+
+    await expenseOperations.delete(id, currentUser.id);
     
     return NextResponse.json(
       { message: 'Invoice deleted successfully' },

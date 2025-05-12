@@ -4,8 +4,8 @@ import { useFieldArray, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Trash2, Plus, Receipt, User, Calendar, DollarSign, Tag, FileText, Loader2 } from "lucide-react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import React, { useState } from "react"
+
 import { expenseOperations } from "@/lib/db"
 
 // Shadcn UI components
@@ -17,6 +17,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+// Helper function to format numbers to IDR currency
+const formatToIDR = (amount: number) => {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
 
 // Form schema for expense and expense_detail
 const formSchema = z.object({
@@ -51,30 +61,45 @@ type FormValues = z.infer<typeof formSchema>
 const categories = ["Office Supplies", "Equipment", "Services", "Travel", "Utilities", "Food & Beverages", "Other"]
 const units = ["Piece", "Box", "Pack", "Kg", "Liter", "Hour", "Day", "Month", "Service"]
 
-export default function ExpenseForm({router} : {router: any}) {
+interface ExpenseFormProps {
+    router: any
+    initialData?: FormValues
+    isEditing?: boolean
+}
+
+const ExpenseForm = React.forwardRef(({ router, initialData, isEditing = false }: ExpenseFormProps, ref) => {
   // Form setup with default values
+    // Set default values based on whether we're editing or creating a new expense
+    const defaultValues = isEditing && initialData
+        ? {
+            ...initialData,
+            // Convert string date to Date object if needed
+            date: initialData.date instanceof Date ? initialData.date : new Date(initialData.date),
+          }
+        : {
+            id_expense: generateId(),
+            code_receipt: `RCP-${generateRandomCode()}`,
+            name_supplier: "",
+            note: "",
+            date: new Date(),
+            total_price: 0,
+            tax_price: 0,
+            expense_details: [
+                {
+                id_expense_detail: generateId(),
+                name_product: "",
+                category: "Office Supplies",
+                quantity: 1,
+                unit: "Piece",
+                price_per_unit: 0,
+                total_price: 0,
+                },
+            ],
+          }
+
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-        id_expense: generateId(),
-        code_receipt: `RCP-${generateRandomCode()}`,
-        name_supplier: "",
-        note: "",
-        date: new Date(),
-        total_price: 0,
-        tax_price: 0,
-        expense_details: [
-            {
-            id_expense_detail: generateId(),
-            name_product: "",
-            category: "Office Supplies",
-            quantity: 1,
-            unit: "Piece",
-            price_per_unit: 0,
-            total_price: 0,
-            },
-        ],
-        },
+        defaultValues,
     })
 
     // Use field array to manage dynamic expense details
@@ -149,8 +174,12 @@ export default function ExpenseForm({router} : {router: any}) {
                 }))
             }
             
-            const response = await fetch("api/invoices", {
-                method: "POST",
+            // Use different endpoint for create vs update
+            const url = isEditing ? `api/invoices/${values.id_expense}` : "api/invoices"
+            const method = isEditing ? "PUT" : "POST"
+            
+            const response = await fetch(url, {
+                method,
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -158,33 +187,35 @@ export default function ExpenseForm({router} : {router: any}) {
             })
 
             if (response.ok) {
-                // Set success message instead of alert
-                setSuccess("Expense invoice saved successfully to database!")
+                // Set success message
+                setSuccess(isEditing ? "Expense invoice updated successfully!" : "Expense invoice saved successfully to database!")
                 
-                // Reset the form
-                form.reset({
-                    id_expense: generateId(),
-                    code_receipt: `RCP-${generateRandomCode()}`,
-                    name_supplier: "",
-                    note: "",
-                    date: new Date(),
-                    total_price: 0,
-                    tax_price: 0,
-                    expense_details: [
-                        {
-                            id_expense_detail: generateId(),
-                            name_product: "",
-                            category: "Office Supplies",
-                            quantity: 1,
-                            unit: "Piece",
-                            price_per_unit: 0,
-                            total_price: 0,
-                        },
-                    ],
-                })
+                if (!isEditing) {
+                    // Reset the form only for new expenses
+                    form.reset({
+                        id_expense: generateId(),
+                        code_receipt: `RCP-${generateRandomCode()}`,
+                        name_supplier: "",
+                        note: "",
+                        date: new Date(),
+                        total_price: 0,
+                        tax_price: 0,
+                        expense_details: [
+                            {
+                                id_expense_detail: generateId(),
+                                name_product: "",
+                                category: "Office Supplies",
+                                quantity: 1,
+                                unit: "Piece",
+                                price_per_unit: 0,
+                                total_price: 0,
+                            },
+                        ],
+                    })
+                }
 
-                // refresh the page 
-                router.push('/invoice')
+                // Navigate back to records page
+                router.push('/record')
             }
 
             // // Save to database using Prisma client via expenseOperations
@@ -209,6 +240,28 @@ export default function ExpenseForm({router} : {router: any}) {
         return Math.floor(10000 + Math.random() * 90000).toString()
     }
 
+    // Expose the populateForm method to parent components via ref
+    React.useImperativeHandle(ref, () => ({
+        populateForm: (data: Partial<FormValues>) => {
+            // Reset the form with the new data
+            const currentValues = form.getValues();
+            
+            // Prepare the new form values by merging current values with scanned data
+            const newValues = {
+                ...currentValues,
+                ...data,
+                // Ensure we keep the ID if it exists
+                id_expense: currentValues.id_expense,
+            };
+            
+            // Reset the form with the new values
+            form.reset(newValues);
+            
+            // Recalculate totals
+            calculateTotals();
+        }
+    }));
+    
     return (
         <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -425,12 +478,11 @@ export default function ExpenseForm({router} : {router: any}) {
                                 <FormControl>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                                    $
+                                    Rp
                                     </span>
                                     <Input
                                     type="number"
-                                    step="0.01"
-                                    className="pl-6"
+                                    className="pl-8"
                                     {...field}
                                     onChange={(e) => {
                                         field.onChange(Number.parseFloat(e.target.value) || 0)
@@ -453,7 +505,7 @@ export default function ExpenseForm({router} : {router: any}) {
                             render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                <Input value={`$${field.value.toFixed(2)}`} readOnly />
+                                <Input value={formatToIDR(field.value)} readOnly />
                                 </FormControl>
                             </FormItem>
                             )}
@@ -503,7 +555,7 @@ export default function ExpenseForm({router} : {router: any}) {
                     <FormField
                         control={form.control}
                         name="total_price"
-                        render={({ field }) => <div className="text-right">${field.value.toFixed(2)}</div>}
+                        render={({ field }) => <div className="text-right">{formatToIDR(field.value)}</div>}
                     />
                     </div>
 
@@ -515,7 +567,7 @@ export default function ExpenseForm({router} : {router: any}) {
                     <FormField
                         control={form.control}
                         name="tax_price"
-                        render={({ field }) => <div className="text-right">${field.value.toFixed(2)}</div>}
+                        render={({ field }) => <div className="text-right">{formatToIDR(field.value)}</div>}
                     />
                     </div>
 
@@ -525,7 +577,7 @@ export default function ExpenseForm({router} : {router: any}) {
                         Grand Total:
                     </Label>
                     <div className="text-right font-bold">
-                        ${(form.getValues("total_price") + form.getValues("tax_price")).toFixed(2)}
+                        {formatToIDR(form.getValues("total_price") + form.getValues("tax_price"))}
                     </div>
                     </div>
                 </div>
@@ -569,4 +621,8 @@ export default function ExpenseForm({router} : {router: any}) {
         </form>
         </Form>
     )
-}
+})
+
+ExpenseForm.displayName = 'ExpenseForm';
+
+export default ExpenseForm;
