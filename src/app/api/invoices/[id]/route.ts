@@ -20,15 +20,7 @@ interface Params {
 export async function GET(request: NextRequest, Params:any) {
     try {
         const { id } = Params;
-        const currentUser = await getCurrentUser();
-
-        if (!currentUser) {
-            return NextResponse.json(
-                { error: 'Unauthorized' },
-                { status: 401 }
-            );
-        }
-        const invoice = await expenseOperations.getById(id, currentUser.id);
+        const invoice = await expenseOperations.getById(id, "e668ff86-da33-4265-91c8-dea37a4432fc");
         
         if (!invoice) {
             return NextResponse.json(
@@ -65,7 +57,7 @@ export async function PUT(request: NextRequest,  Params: any) {
         );
     }
 
-    const invoice = await expenseOperations.update(id, data, currentUser.id);
+    const invoice = await expenseOperations.update(id, data, "e668ff86-da33-4265-91c8-dea37a4432fc");
     
     return NextResponse.json({ invoice });
   } catch (error) {
@@ -94,7 +86,7 @@ export async function DELETE(request: NextRequest, Params:any) {
         );
     }
 
-    await expenseOperations.delete(id, currentUser.id);
+    await expenseOperations.delete(id, "e668ff86-da33-4265-91c8-dea37a4432fc");
     
     return NextResponse.json(
       { message: 'Invoice deleted successfully' },

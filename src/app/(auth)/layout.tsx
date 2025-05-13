@@ -12,17 +12,17 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const router = useRouter();
+  // const router = useRouter();
 
-  useEffect(() => {
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        router.push("/login");
-      }
-    };
-    checkSession();
-  }, [router]);
+  // useEffect(() => {
+  //   const checkSession = async () => {
+  //     const { data: { session } } = await supabase.auth.getSession();
+  //     if (!session) {
+  //       router.push("/login");
+  //     }
+  //   };
+  //   checkSession();
+  // }, [router]);
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -68,6 +68,21 @@ model ExpenseDetail {
   expense        Expense @relation(fields: [expenseId], references: [id])
 }
 
+model SavingsGoal {
+  id             String   @id @default(uuid())
+  name           String
+  target_amount  Float
+  current_amount Float    @default(0)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+}
+
+model Income {
+  id         String   @id @default(uuid())
+  amount     Float
+  created_at DateTime @default(now())
+}
+
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
