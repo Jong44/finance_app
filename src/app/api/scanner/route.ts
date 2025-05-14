@@ -75,6 +75,7 @@ export async function POST(req: NextRequest, { params }: { params: any }) {
                - Price per unit (as a number)
                - Total price for the item (as a number)
                - Category (best guess from: Office Supplies, Food & Beverage, Transportation, Accommodation, Other)
+               - Category_Budget (enum: Wants, Needs, Savings)
 
             If the content is not an invoice or cannot be parsed, return exactly the string "unknown".
 
@@ -95,6 +96,7 @@ export async function POST(req: NextRequest, { params }: { params: any }) {
                   "price_per_unit": [Unit Price],
                   "total_price": [Item Total Price],
                   "category": "[Category: Office Supplies, Equipment, Food & Beverages, Utilities,Travel, Services, Other]"
+                  "category_budget": "[Category Budget: Wants, Needs, Savings]"
                 },
                 ...
               ]

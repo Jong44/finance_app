@@ -69,6 +69,7 @@ export const expenseOperations = {
             create: data.details.map((detail: any) => ({
               name_product: detail.name_product,
               category: detail.category,
+              category_budget: detail.category_budget,
               quantity: detail.quantity,
               unit: detail.unit,
               price_per_unit: detail.price_per_unit,
@@ -110,6 +111,7 @@ export const expenseOperations = {
             create: data.details.map((detail: any) => ({
               name_product: detail.name_product,
               category: detail.category,
+              category_budget: detail.category_budget,  
               quantity: detail.quantity,
               unit: detail.unit,
               price_per_unit: detail.price_per_unit,

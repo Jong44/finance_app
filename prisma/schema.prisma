@@ -21,14 +21,14 @@ model User {
 
 // Define your models based on your application needs
 model Invoice {
-  id              String    @id @default(uuid())
+  id              String   @id @default(uuid())
   invoiceTitle    String
   transactionDate DateTime
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
   items           Item[]
   userId          String
-  user            User      @relation(fields: [userId], references: [id])
+  user            User     @relation(fields: [userId], references: [id])
 }
 
 model Item {
@@ -57,18 +57,60 @@ model Expense {
 }
 
 model ExpenseDetail {
-  id             String  @id @default(uuid())
-  name_product   String
-  category       String
-  quantity       Int
-  unit           String
-  price_per_unit Float
-  total_price    Float
-  expenseId      String
-  expense        Expense @relation(fields: [expenseId], references: [id])
+  id              String  @id @default(uuid())
+  name_product    String
+  category        String
+  category_budget String
+  quantity        Int
+  unit            String
+  price_per_unit  Float
+  total_price     Float
+  expenseId       String
+  expense         Expense @relation(fields: [expenseId], references: [id])
+}
+
+model SavingsGoal {
+  id             String         @id @default(uuid())
+  name           String
+  target_amount  Float
+  current_amount Float          @default(0)
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  SavingDetail   SavingDetail[]
+}
+
+model SavingDetail {
+  id            String      @id @default(uuid())
+  amount        Float
+  date          DateTime
+  savingsGoalId String
+  savingsGoal   SavingsGoal @relation(fields: [savingsGoalId], references: [id])
+}
+
+model BudgetOverview {
+  id         String   @id @default(uuid())
+  needs      Float
+  wants      Float
+  savings    Float
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Personality {
+  id                      String  @id @default(uuid())
+  name                    String
+  age                     Int
+  profession              String
+  income                  Float
+  expenses_foods          Float
+  expenses_transportation Float
+  expenses_entertainment  Float
+  expenses_others         Float
+  is_saving               Boolean
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-

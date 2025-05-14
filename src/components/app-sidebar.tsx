@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   BookOpen,
   Bot,
@@ -14,12 +14,12 @@ import {
   Settings2,
   SquareTerminal,
   User,
-} from "lucide-react"
+} from "lucide-react";
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavSecondary } from "@/components/nav-secondary"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/nav-main";
+import { NavProjects } from "@/components/nav-projects";
+import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
@@ -32,14 +32,14 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarMenuAction,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible"
+} from "@/components/ui/collapsible";
 
-import { getCurrentUser } from "@/lib/db"
+import { getCurrentUser } from "@/lib/db";
 
 const data = {
   user: {
@@ -74,17 +74,16 @@ const data = {
       icon: LifeBuoy,
     },
     {
-      title: "Reports",
-      url: "/reports",
-      icon: Map,
+      title: "Personalty",
+      url: "/personality",
+      icon: SquareTerminal,
     },
   ],
-}
+};
 
-export  function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   // const currentUser = await getCurrentUser()
-  
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -111,5 +110,5 @@ export  function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
         <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

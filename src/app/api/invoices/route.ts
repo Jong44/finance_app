@@ -9,15 +9,7 @@ import { getCurrentUser } from '@/lib/db';
 
 export async function GET() {
   try {
-    const currentUser = await getCurrentUser();
-
-    if (!currentUser) {
-        return NextResponse.json(
-            { error: 'Unauthorized' },
-            { status: 401 }
-        );
-    }
-    const invoices = await expenseOperations.getAll(currentUser.id);
+    const invoices = await expenseOperations.getAll("c23b6be7-b8c5-46dd-9f50-c0ff52e2a829");
     return NextResponse.json({ invoices });
   } catch (error) {
     console.error('Error fetching invoices:', error);
@@ -38,18 +30,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const data = await request.json();
-    const currentUser = await getCurrentUser();
 
-    if (!currentUser) {
-        return NextResponse.json(NextResponse.json({
-    status: false,
-    data: "error"
-  }));
-    }
 
-    console.log(currentUser);
-
-    const invoice = await expenseOperations.create(data, currentUser.id);
+    const invoice = await expenseOperations.create(data, "c23b6be7-b8c5-46dd-9f50-c0ff52e2a829");
     return NextResponse.json({ success: true, data: invoice });
   } catch (error) {
     console.error('Error creating invoice:', error);

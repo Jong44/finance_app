@@ -4,39 +4,49 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, Tooltip, ResponsiveContainer } from "recharts";
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { ChartConfig, ChartContainer, ChartTooltipContent } from "../ui/chart";
 import { DollarSign, TrendingUp } from "lucide-react";
 
-const chartData = [
-  { month: "January", needs: 3500, wants: 2000, savings: 1500 },
-  { month: "February", needs: 4000, wants: 2500, savings: 1000 },
-  { month: "March", needs: 3800, wants: 2200, savings: 1700 },
-  { month: "April", needs: 4200, wants: 2600, savings: 1200 },
-  { month: "May", needs: 3900, wants: 2400, savings: 1300 },
-  { month: "June", needs: 4100, wants: 2700, savings: 1200 },
-];
-
+// Define chartConfig object for consistent chart styling
 const chartConfig = {
   needs: {
     label: "Needs (50%)",
-    color: "hsl(var(--chart-needs))",
+    color: "var(--color-level-1)",
   },
   wants: {
     label: "Wants (30%)",
-    color: "hsl(var(--chart-wants))",
+    color: "var( --color-level-2)",
   },
   savings: {
     label: "Savings (20%)",
-    color: "hsl(var(--chart-savings))",
+    color: "var( --color-level-3)",
   },
 } satisfies ChartConfig;
 
-const BarChartDashboard = () => {
+interface BarChartDashboardProps {
+  chart_data: {
+    month: string;
+    needs: number;
+    wants: number;
+    savings: number;
+  }[];
+}
+
+const BarChartDashboard = ({ chart_data }: BarChartDashboardProps) => {
+  console.log("BarChartDashboard data:", chart_data);
   return (
     <Card>
       <CardHeader>
@@ -45,14 +55,14 @@ const BarChartDashboard = () => {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart data={chartData} barGap={12} barCategoryGap="20%">
+          <BarChart data={chart_data} barGap={12} barCategoryGap="20%">
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="month"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(value) => value.slice(0, 3)} // Shorten month names
             />
             <YAxis tickLine={false} axisLine={false} />
             <Tooltip
@@ -60,20 +70,25 @@ const BarChartDashboard = () => {
               cursor={{ fill: "rgba(0,0,0,0.05)" }}
             />
             <Legend />
-            <Bar dataKey="needs" fill="var(--color-level-1)" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="wants" fill="var(--color-level-2)" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="savings" fill="var(--color-level-3)" radius={[4, 4, 0, 0]} />
+            {/* Render dynamic bars */}
+            <Bar
+              dataKey="needs"
+              fill={chartConfig.needs.color}
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar
+              dataKey="wants"
+              fill={chartConfig.wants.color}
+              radius={[4, 4, 0, 0]}
+            />
+            <Bar
+              dataKey="savings"
+              fill={chartConfig.savings.color}
+              radius={[4, 4, 0, 0]}
+            />
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing budget distribution for the last 6 months
-        </div>
-      </CardFooter>
     </Card>
   );
 };

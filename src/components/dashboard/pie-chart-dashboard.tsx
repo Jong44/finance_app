@@ -9,25 +9,23 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-
 import {
   ChartConfig,
   ChartContainer,
-  ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TrendingUp } from "lucide-react";
 
-// Data untuk breakdown pengeluaran per kategori
-const chartDataPie = [
-  { category: "Food & Drinks", amount: 5000000, fill: "var(--color-level-1)" },
-  { category: "Transportation", amount: 3000000, fill: "var(--color-level-2)" },
-  { category: "Bills & Utilities", amount: 2000000, fill: "var(--color-level-3)" },
-  { category: "Entertainment", amount: 1500000, fill: "var(--color-level-4)" },
-  { category: "Savings", amount: 2500000, fill: "var(--color-level-5)" },
-];
+interface ExpenseDetail {
+  id: string;
+  category: string;
+  total_price: number;
+}
+
+interface PieChartDashboardProps {
+  data: ExpenseDetail[];
+}
 
 const chartConfigPie = {
   food: {
@@ -52,7 +50,50 @@ const chartConfigPie = {
   },
 } satisfies ChartConfig;
 
-const PieChartDashboard = () => {
+const colors = [
+  "var(--color-level-1)",
+  "var(--color-level-2)",
+  "var(--color-level-3)",
+  "var(--color-level-4)",
+  "var(--color-level-5)",
+];
+
+const PieChartDashboard: React.FC<PieChartDashboardProps> = ({ data }) => {
+  const [chartData, setChartData] = useState<
+    { category: string; amount: number; fill: string }[]
+  >([]);
+
+  useEffect(() => {
+    // Group expenses by category
+    const categoryTotals: { [key: string]: number } = {};
+
+    data.forEach((expense) => {
+      const category = expense.category.toLowerCase();
+      if (!categoryTotals[category]) {
+        categoryTotals[category] = 0;
+      }
+      categoryTotals[category] += expense.total_price;
+      console.log(category);
+    });
+
+    // Convert to array for PieChart
+    const formattedData = Object.entries(categoryTotals).map(
+      ([category, amount]) => {
+        const config = chartConfigPie[category] || {
+          label: category,
+          color: colors[Math.floor(Math.random() * colors.length)],
+        };
+        return {
+          category: config.label,
+          amount,
+          fill: config.color,
+        };
+      }
+    );
+
+    setChartData(formattedData);
+  }, [data]);
+
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">
@@ -61,33 +102,29 @@ const PieChartDashboard = () => {
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer config={chartConfigPie}>
-          <PieChart>
-            <Tooltip content={<ChartTooltipContent hideLabel />} />
-            <Pie
-              data={chartDataPie}
-              dataKey="amount"
-              nameKey="category"
-              cx="50%"
-              cy="50%"
-              outerRadius={100}
-              label={({ name, value }) => `${name} (${value.toLocaleString()})`}
-              labelLine={false}
-            >
-              {chartDataPie.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} />
-              ))}
-            </Pie>
-          </PieChart>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Tooltip content={<ChartTooltipContent hideLabel />} />
+              <Pie
+                data={chartData}
+                dataKey="amount"
+                nameKey="category"
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                label={({ name, value }) =>
+                  `${name} (${value.toLocaleString()})`
+                }
+                labelLine={false}
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                ))}
+              </Pie>
+            </PieChart>
+          </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing expense distribution for the last 6 months
-        </div>
-      </CardFooter>
     </Card>
   );
 };
