@@ -1,9 +1,13 @@
-'use client';
+"use client";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { Separator } from "@radix-ui/react-separator";
 import { supabase } from "@/lib/supabase";
 
@@ -32,11 +36,8 @@ export default function AuthLayout({
             <SidebarTrigger className="-ml-1" />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            {children}
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
-  
 }

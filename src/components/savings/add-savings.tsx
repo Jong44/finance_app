@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,11 +17,26 @@ import { Label } from "@/components/ui/label";
 interface AddEditSavingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (data: { id?: string; name: string; target_amount: number; current_amount?: number }) => void;
-  defaultValues?: { id?: string; name: string; target_amount: number; current_amount?: number };
+  onSave: (data: {
+    id?: string;
+    name: string;
+    target_amount: number;
+    current_amount?: number;
+  }) => void;
+  defaultValues?: {
+    id?: string;
+    name: string;
+    target_amount: number;
+    current_amount?: number;
+  };
 }
 
-const AddEditSavingsModal: React.FC<AddEditSavingsModalProps> = ({ isOpen, onClose, onSave, defaultValues }) => {
+const AddEditSavingsModal: React.FC<AddEditSavingsModalProps> = ({
+  isOpen,
+  onClose,
+  onSave,
+  defaultValues,
+}) => {
   const [name, setName] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
   const [currentAmount, setCurrentAmount] = useState("");
@@ -50,23 +73,39 @@ const AddEditSavingsModal: React.FC<AddEditSavingsModalProps> = ({ isOpen, onClo
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{defaultValues ? "Edit Savings Goal" : "Add Savings Goal"}</DialogTitle>
+          <DialogTitle>
+            {defaultValues ? "Edit Savings Goal" : "Add Savings Goal"}
+          </DialogTitle>
           <DialogDescription>
-            {defaultValues ? "Update your savings goal details." : "Create a new savings goal to start saving."}
+            {defaultValues
+              ? "Update your savings goal details."
+              : "Create a new savings goal to start saving."}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <Label>Name</Label>
-          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Trip to Bali" />
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="e.g. Trip to Bali"
+          />
 
           <Label>Target Amount</Label>
-          <Input value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} placeholder="e.g. 10000000" />
+          <Input
+            value={targetAmount}
+            onChange={(e) => setTargetAmount(e.target.value)}
+            placeholder="e.g. 10000000"
+          />
 
           {defaultValues && (
             <>
               <Label>Current Amount</Label>
-              <Input value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)} placeholder="e.g. 5000000" />
+              <Input
+                value={currentAmount}
+                onChange={(e) => setCurrentAmount(e.target.value)}
+                placeholder="e.g. 5000000"
+              />
             </>
           )}
         </div>
@@ -75,7 +114,9 @@ const AddEditSavingsModal: React.FC<AddEditSavingsModalProps> = ({ isOpen, onClo
           <Button variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>{defaultValues ? "Update" : "Add"}</Button>
+          <Button onClick={handleSubmit}>
+            {defaultValues ? "Update" : "Add"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
